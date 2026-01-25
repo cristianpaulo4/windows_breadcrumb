@@ -3,7 +3,6 @@ import 'package:example/home/home_page.dart';
 import 'package:example/page2/page2.dart';
 import 'package:example/product/product_page.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/material.dart';
 import 'package:windows_breadcrumb/windows_breadcrumb.dart';
 
 class BasePage extends StatefulWidget {

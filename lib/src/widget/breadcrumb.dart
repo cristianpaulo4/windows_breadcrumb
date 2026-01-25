@@ -2,17 +2,25 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:windows_breadcrumb/windows_breadcrumb.dart';
 
 class BreadCrumb extends StatefulWidget {
-  const BreadCrumb({super.key, required this.itemInitial, required this.pages});
+  const BreadCrumb({
+    super.key,
+    required this.itemInitial,
+    required this.pages,
+    this.chevronIconSize,
+    this.divider,
+  });
   final ItemPage itemInitial;
   final List<ItemPage> pages;
+  final double? chevronIconSize;
+  final Widget? divider;
 
   @override
   State<BreadCrumb> createState() => _BreadCrumbState();
 }
 
 class _BreadCrumbState extends State<BreadCrumb> {
-  List<BreadcrumbItem<String>> breadcrumb = [];
   late AppRouteObserver observer;
+  List<BreadcrumbItem<String>> breadcrumb = [];
 
   @override
   void initState() {
@@ -29,6 +37,10 @@ class _BreadCrumbState extends State<BreadCrumb> {
   void _handleRoutePush(Route? route) {
     if (route?.settings.name == null || !mounted) return;
     if (route?.settings.name == '/') return;
+    if (breadcrumb.first.value == route?.settings.name) {
+      breadcrumb.removeRange(1, breadcrumb.length);
+      setState(() {});
+    }
     if (breadcrumb.any((e) => e.value == route!.settings.name)) return;
 
     final pageData = widget.pages.firstWhere(
@@ -52,6 +64,19 @@ class _BreadCrumbState extends State<BreadCrumb> {
       header: PageHeader(
         title: BreadcrumbBar<String>(
           items: breadcrumb,
+          chevronIconSize: widget.chevronIconSize ?? 8,
+          chevronIconBuilder: (context, item) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 6,
+              ).copyWith(top: 4),
+              child:
+                  widget.divider ??
+                  Icon(WindowsIcons.chevron_right_small, size: 10),
+            );
+          },
+          chevronAlignment: ChevronAlignment.center,
+
           onItemPressed: (item) {
             final index = breadcrumb.indexOf(item);
             breadcrumb.removeRange(index + 1, breadcrumb.length);
