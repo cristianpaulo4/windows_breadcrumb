@@ -39,7 +39,6 @@ class _BreadCrumbState extends State<BreadCrumb> {
     if (route?.settings.name == '/') return;
     if (breadcrumb.first.value == route?.settings.name) {
       breadcrumb.removeRange(1, breadcrumb.length);
-      setState(() {});
     }
     if (breadcrumb.any((e) => e.value == route!.settings.name)) return;
 
