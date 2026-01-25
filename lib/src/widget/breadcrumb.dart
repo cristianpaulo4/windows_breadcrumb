@@ -31,7 +31,17 @@ class _BreadCrumbState extends State<BreadCrumb> {
         value: widget.itemInitial.route,
       ),
     );
-    observer = AppRouteObserver(onPush: _handleRoutePush);
+    observer = AppRouteObserver(onPush: _handleRoutePush, onPop: onPop);
+  }
+
+  void onPop(Route? route) {
+    if (route?.settings.name == null || !mounted || breadcrumb.length == 1) {
+      return;
+    }
+    int index = breadcrumb.indexWhere((e) => e.value == route?.settings.name);
+    if (index == -1) return;
+    breadcrumb.removeRange(index + 1, breadcrumb.length);
+    setState(() {});
   }
 
   void _handleRoutePush(Route? route) {
@@ -117,11 +127,18 @@ class _BreadCrumbState extends State<BreadCrumb> {
 
 class AppRouteObserver extends NavigatorObserver {
   final Function(Route?) onPush;
-  AppRouteObserver({required this.onPush});
+  final Function(Route?) onPop;
+  AppRouteObserver({required this.onPush, required this.onPop});
 
   @override
   void didPush(Route route, Route? previousRoute) {
     super.didPush(route, previousRoute);
     onPush(route);
+  }
+
+  @override
+  void didPop(Route route, Route? previousRoute) {
+    super.didPop(route, previousRoute);
+    onPop(previousRoute);
   }
 }

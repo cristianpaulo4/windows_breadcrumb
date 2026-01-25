@@ -1,4 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:windows_breadcrumb/windows_breadcrumb.dart';
 
 class Page2 extends StatefulWidget {
   const Page2({super.key});
@@ -14,7 +15,14 @@ class _Page2State extends State<Page2> {
 
     return ScaffoldPage(
       padding: EdgeInsets.zero,
-      content: Center(child: Text('Page 2: $arguments')),
+      content: Center(
+        child: Button(
+          child: Text('Page 2: $arguments'),
+          onPressed: () {
+            Navigator.of(context).navigateBack();
+          },
+        ),
+      ),
     );
   }
 }
