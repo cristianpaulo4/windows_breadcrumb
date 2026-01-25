@@ -1,7 +1,7 @@
 name: windows_breadcrumb
-description: "A new Flutter package project."
-version: 0.0.1
-homepage:
+description: "Breadcrumb for Flutter"
+version: 1.0.0
+homepage: 'https://github.com/cristianpaulo4/windows_breadcrumb'
 
 environment:
   sdk: ^3.10.4
