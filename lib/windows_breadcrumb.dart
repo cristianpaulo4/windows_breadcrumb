@@ -1,6 +1,5 @@
 export 'package:bitsdojo_window/bitsdojo_window.dart';
 export 'package:windows_breadcrumb/src/widget/body.dart';
 export 'src/extension/navigation_extension.dart';
-export 'src/extension/fluent_app_extension.dart';
 export 'src/entity/item_page.dart';
 export 'src/entity/item_page_expander.dart';
