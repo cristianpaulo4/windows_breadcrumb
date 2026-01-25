@@ -1,5 +1,4 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/material.dart';
 import 'package:windows_breadcrumb/windows_breadcrumb.dart';
 
 class BreadCrumb extends StatefulWidget {
@@ -73,6 +72,10 @@ class _BreadCrumbState extends State<BreadCrumb> {
             transitionDuration: Duration.zero,
             reverseTransitionDuration: Duration.zero,
             pageBuilder: (context, animation, secondaryAnimation) {
+              if (settings.name == '/') {
+                return widget.itemInitial.body;
+              }
+
               return widget.pages
                   .firstWhere((e) => e.route == settings.name)
                   .body;

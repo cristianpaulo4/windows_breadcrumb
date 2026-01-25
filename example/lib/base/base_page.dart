@@ -17,7 +17,7 @@ class _BasePageState extends State<BasePage> {
   List<ItemPage> get pages => [
     ItemPage(
       label: 'Home',
-      route: '/',
+      route: '/home',
       body: const HomePage(),
       icon: const Icon(FluentIcons.home),
       isDrawer: true,
