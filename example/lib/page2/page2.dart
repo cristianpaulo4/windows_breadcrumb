@@ -12,6 +12,9 @@ class _Page2State extends State<Page2> {
   Widget build(BuildContext context) {
     final arguments = ModalRoute.of(context)?.settings.arguments;
 
-    return ScaffoldPage(content: Center(child: Text('Page 2: $arguments')));
+    return ScaffoldPage(
+      padding: EdgeInsets.zero,
+      content: Center(child: Text('Page 2: $arguments')),
+    );
   }
 }

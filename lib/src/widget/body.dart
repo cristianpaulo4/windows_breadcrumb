@@ -4,8 +4,15 @@ import 'package:windows_breadcrumb/src/widget/breadcrumb.dart';
 import 'package:windows_breadcrumb/windows_breadcrumb.dart';
 
 class BreadCrumbBody extends StatefulWidget {
-  const BreadCrumbBody({super.key, required this.pages});
+  const BreadCrumbBody({
+    super.key,
+    required this.pages,
+    this.header,
+    this.footer,
+  });
   final List<ItemPage> pages;
+  final Widget? header;
+  final Widget? footer;
 
   @override
   State<BreadCrumbBody> createState() => _BreadCrumbBodyState();
@@ -14,19 +21,8 @@ class BreadCrumbBody extends StatefulWidget {
 class _BreadCrumbBodyState extends State<BreadCrumbBody> {
   int _selectedIndex = 0;
 
-  List<ItemDrawer> get drawerMenus {
-    return widget.pages
-        .where((e) => e.isDrawer)
-        .map(
-          (e) => ItemDrawer(
-            label: e.label,
-            route: e.route,
-            icon: e.icon ?? const SizedBox.shrink(),
-            body: e.body,
-            pages: e.pages,
-          ),
-        )
-        .toList();
+  List<ItemPage> get drawerMenus {
+    return widget.pages.where((e) => e.isDrawer).toList();
   }
 
   List<ItemPage> get pagesNavigator {
@@ -39,56 +35,35 @@ class _BreadCrumbBodyState extends State<BreadCrumbBody> {
     return drawerMenus.map((item) {
       if (item.pages != null && item.pages!.isNotEmpty) {
         return PaneItemExpander(
-          icon: item.icon,
+          icon: item.icon ?? SizedBox.shrink(),
           title: Text(item.label),
           items: item.pages!.map((e) {
-            return PaneItem(
-              title: Text(e.label),
-              body: BreadCrumb(
-                itemInitial: ItemDrawer(
-                  label: e.label,
-                  route: e.route,
-                  icon: e.icon ?? const SizedBox.shrink(),
-                  body: e.body,
-                  pages: e.pages,
-                ),
-                pages: pagesNavigator,
-              ),
-              icon: e.icon ?? SizedBox(),
-              onTap: () {
-                setState(() {
-                  _selectedIndex = pagesNavigator.indexWhere(
-                    (element) => element.route == e.route,
-                  );
-                  navigatorKey.currentState?.pushNamedAndRemoveUntil(
-                    e.route,
-                    (Route<dynamic> route) => false,
-                  );
-                });
-              },
-            );
+            return buildPane(e);
           }).toList(),
           body: item.body,
         );
       }
-
-      return PaneItem(
-        title: Text(item.label),
-        body: BreadCrumb(itemInitial: item, pages: pagesNavigator),
-        icon: item.icon,
-        onTap: () {
-          setState(() {
-            _selectedIndex = pagesNavigator.indexWhere(
-              (element) => element.route == item.route,
-            );
-            navigatorKey.currentState?.pushNamedAndRemoveUntil(
-              item.route,
-              (Route<dynamic> route) => false,
-            );
-          });
-        },
-      );
+      return buildPane(item);
     }).toList();
+  }
+
+  PaneItem buildPane(ItemPage item) {
+    return PaneItem(
+      title: Text(item.label),
+      body: BreadCrumb(itemInitial: item, pages: pagesNavigator),
+      icon: item.icon ?? SizedBox.shrink(),
+      onTap: () {
+        setState(() {
+          _selectedIndex = pagesNavigator.indexWhere(
+            (element) => element.route == item.route,
+          );
+          navigatorKey.currentState?.pushNamedAndRemoveUntil(
+            item.route,
+            (Route<dynamic> route) => false,
+          );
+        });
+      },
+    );
   }
 
   @override
@@ -109,28 +84,18 @@ class _BreadCrumbBodyState extends State<BreadCrumbBody> {
         size: const NavigationPaneSize(openMaxWidth: 230),
         indicator: const EndNavigationIndicator(),
         selected: _selectedIndex,
-        header: PageHeader(
-          title: ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 200),
-            child: Text(
-              "Exemplo BreadCrumb",
-              style: const TextStyle(fontSize: 14),
-            ),
-          ),
-        ),
+        header: widget.header == null
+            ? null
+            : PageHeader(
+                title: ConstrainedBox(
+                  constraints: const BoxConstraints(maxHeight: 200),
+                  child: widget.header!,
+                ),
+              ),
         toggleable: true,
         items: [...originalItems],
         footerItems: [
-          PaneItemHeader(
-            header: Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Text(
-                "Versão ",
-                style: const TextStyle(fontSize: 10),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
+          if (widget.footer != null) PaneItemHeader(header: widget.footer!),
         ],
       ),
     );

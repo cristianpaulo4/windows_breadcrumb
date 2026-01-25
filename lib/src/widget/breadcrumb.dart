@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:windows_breadcrumb/windows_breadcrumb.dart';
 
 class BreadCrumb extends StatefulWidget {
-  BreadCrumb({super.key, required this.itemInitial, required this.pages});
-  final ItemDrawer itemInitial;
+  const BreadCrumb({super.key, required this.itemInitial, required this.pages});
+  final ItemPage itemInitial;
   final List<ItemPage> pages;
 
   @override
