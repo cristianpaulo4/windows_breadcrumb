@@ -9,10 +9,16 @@ class BreadCrumbBody extends StatefulWidget {
     required this.pages,
     this.header,
     this.footer,
+    this.actions,
+    this.fontSize = 26,
+    this.colorBreadcrumb = Colors.black,
   });
   final List<ItemPage> pages;
   final Widget? header;
   final Widget? footer;
+  final List<Widget>? actions;
+  final double? fontSize;
+  final Color colorBreadcrumb;
 
   @override
   State<BreadCrumbBody> createState() => _BreadCrumbBodyState();
@@ -50,7 +56,12 @@ class _BreadCrumbBodyState extends State<BreadCrumbBody> {
   PaneItem buildPane(ItemPage item) {
     return PaneItem(
       title: Text(item.label),
-      body: BreadCrumb(itemInitial: item, pages: pagesNavigator),
+      body: BreadCrumb(
+        itemInitial: item,
+        pages: pagesNavigator,
+        color: widget.colorBreadcrumb,
+        fontSize: widget.fontSize,
+      ),
       icon: item.icon ?? SizedBox.shrink(),
       onTap: () {
         setState(() {
@@ -74,12 +85,13 @@ class _BreadCrumbBodyState extends State<BreadCrumbBody> {
           child: Row(
             children: [
               Expanded(child: MoveWindow()),
-              const WindowButtons(),
+              WindowButtons(actions: widget.actions),
             ],
           ),
         ),
         automaticallyImplyLeading: false,
       ),
+
       pane: NavigationPane(
         size: const NavigationPaneSize(openMaxWidth: 230),
         indicator: const EndNavigationIndicator(),
@@ -94,6 +106,7 @@ class _BreadCrumbBodyState extends State<BreadCrumbBody> {
               ),
         toggleable: true,
         items: [...originalItems],
+
         footerItems: [
           if (widget.footer != null) PaneItemHeader(header: widget.footer!),
         ],

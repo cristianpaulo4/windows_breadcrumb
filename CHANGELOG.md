@@ -1,3 +1,7 @@
+## 1.0.4
+
+* Update color on breadcrumb
+
 ## 1.0.3
 
 * Fix bug on pop 

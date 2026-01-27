@@ -1,4 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
+
 import 'package:windows_breadcrumb/windows_breadcrumb.dart';
 
 class BreadCrumb extends StatefulWidget {
@@ -8,11 +9,15 @@ class BreadCrumb extends StatefulWidget {
     required this.pages,
     this.chevronIconSize,
     this.divider,
+    this.color = Colors.black,
+    this.fontSize,
   });
   final ItemPage itemInitial;
   final List<ItemPage> pages;
   final double? chevronIconSize;
   final Widget? divider;
+  final Color color;
+  final double? fontSize;
 
   @override
   State<BreadCrumb> createState() => _BreadCrumbState();
@@ -21,13 +26,26 @@ class BreadCrumb extends StatefulWidget {
 class _BreadCrumbState extends State<BreadCrumb> {
   late AppRouteObserver observer;
   List<BreadcrumbItem<String>> breadcrumb = [];
+  late Color color;
+
+  TextStyle get getStyle {
+    return TextStyle(
+      color: color,
+      fontSize: widget.fontSize,
+      fontWeight: FontWeight.bold,
+    );
+  }
 
   @override
   void initState() {
     super.initState();
+    color = widget.color;
     breadcrumb.add(
       BreadcrumbItem(
-        label: Text(widget.itemInitial.label),
+        label: Text(
+          widget.itemInitial.title ?? widget.itemInitial.label,
+          style: getStyle,
+        ),
         value: widget.itemInitial.route,
       ),
     );
@@ -36,11 +54,24 @@ class _BreadCrumbState extends State<BreadCrumb> {
 
   void onPop(Route? route) {
     if (route?.settings.name == null || !mounted || breadcrumb.length == 1) {
+      final text = breadcrumb[0].label as Text;
+      breadcrumb[0] = BreadcrumbItem(
+        label: Text(text.data!, style: getStyle),
+        value: breadcrumb[0].value,
+      );
       return;
     }
     int index = breadcrumb.indexWhere((e) => e.value == route?.settings.name);
     if (index == -1) return;
+
     breadcrumb.removeRange(index + 1, breadcrumb.length);
+    final lastItem = breadcrumb.last;
+    final indexLastItem = breadcrumb.indexOf(lastItem);
+    final text = lastItem.label as Text;
+    breadcrumb[indexLastItem] = BreadcrumbItem(
+      label: Text(text.data!, style: getStyle),
+      value: lastItem.value,
+    );
     setState(() {});
   }
 
@@ -58,20 +89,45 @@ class _BreadCrumbState extends State<BreadCrumb> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
+        final title = pageData.title ?? pageData.label;
+        breadcrumb = alterColorText(route);
+
         setState(() {
           breadcrumb.add(
-            BreadcrumbItem(label: Text(pageData.label), value: pageData.route),
+            BreadcrumbItem(
+              label: Text(title, style: getStyle),
+              value: pageData.route,
+            ),
           );
         });
       }
     });
   }
 
+  List<BreadcrumbItem<String>> alterColorText(Route? route) {
+    if (breadcrumb.last.value != route!.settings.name) {
+      return breadcrumb.map((e) {
+        final pageData = widget.pages.firstWhere(
+          (element) => element.route == e.value,
+        );
+        return BreadcrumbItem(
+          label: Text(
+            pageData.title ?? pageData.label,
+            style: getStyle.copyWith(color: color.withAlpha(150)),
+          ),
+          value: e.value,
+        );
+      }).toList();
+    }
+    return breadcrumb;
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage(
-      header: PageHeader(
-        title: BreadcrumbBar<String>(
+      header: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: BreadcrumbBar<String>(
           items: breadcrumb,
           chevronIconSize: widget.chevronIconSize ?? 8,
           chevronIconBuilder: (context, item) {
