@@ -1,3 +1,7 @@
+## 1.0.5
+
+* Update navigation extension
+
 ## 1.0.4
 
 * Update color on breadcrumb
