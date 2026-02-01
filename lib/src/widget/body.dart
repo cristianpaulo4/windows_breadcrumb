@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:windows_breadcrumb/src/widget/bar_windows.dart';
 import 'package:windows_breadcrumb/src/widget/breadcrumb.dart';
+import 'package:windows_breadcrumb/src/widget/breadcrumb_app_bar.dart';
 import 'package:windows_breadcrumb/windows_breadcrumb.dart';
 
 class BreadCrumbBody extends StatefulWidget {
@@ -12,6 +13,7 @@ class BreadCrumbBody extends StatefulWidget {
     this.actions,
     this.fontSize = 26,
     this.colorBreadcrumb = Colors.black,
+    this.content,
   });
   final List<ItemPage> pages;
   final Widget? header;
@@ -19,6 +21,7 @@ class BreadCrumbBody extends StatefulWidget {
   final List<Widget>? actions;
   final double? fontSize;
   final Color colorBreadcrumb;
+  final Widget? content;
 
   @override
   State<BreadCrumbBody> createState() => _BreadCrumbBodyState();
@@ -39,6 +42,14 @@ class _BreadCrumbBodyState extends State<BreadCrumbBody> {
 
   List<NavigationPaneItem> get originalItems {
     return drawerMenus.map((item) {
+      if (item is ItemPageButton) {
+        return PaneItemAction(
+          icon: item.icon ?? SizedBox.shrink(),
+          title: Text(item.label),
+          onTap: item.onPressed,
+        );
+      }
+
       if (item.pages != null && item.pages!.isNotEmpty) {
         return PaneItemExpander(
           icon: item.icon ?? SizedBox.shrink(),
@@ -46,7 +57,7 @@ class _BreadCrumbBodyState extends State<BreadCrumbBody> {
           items: item.pages!.map((e) {
             return buildPane(e);
           }).toList(),
-          body: item.body,
+          body: item.body!,
         );
       }
       return buildPane(item);
@@ -69,7 +80,7 @@ class _BreadCrumbBodyState extends State<BreadCrumbBody> {
             (element) => element.route == item.route,
           );
           navigatorKey.currentState?.pushNamedAndRemoveUntil(
-            item.route,
+            item.route!,
             (Route<dynamic> route) => false,
           );
         });

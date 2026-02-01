@@ -1,3 +1,7 @@
+## 1.0.6
+
+* Fix bug on breadcrumb
+
 ## 1.0.5
 
 * Update navigation extension

@@ -46,7 +46,7 @@ class _BreadCrumbState extends State<BreadCrumb> {
           widget.itemInitial.title ?? widget.itemInitial.label,
           style: getStyle,
         ),
-        value: widget.itemInitial.route,
+        value: widget.itemInitial.route!,
       ),
     );
     observer = AppRouteObserver(onPush: _handleRoutePush, onPop: onPop);
@@ -96,7 +96,7 @@ class _BreadCrumbState extends State<BreadCrumb> {
           breadcrumb.add(
             BreadcrumbItem(
               label: Text(title, style: getStyle),
-              value: pageData.route,
+              value: pageData.route!,
             ),
           );
         });
@@ -155,6 +155,7 @@ class _BreadCrumbState extends State<BreadCrumb> {
       content: Navigator(
         key: navigatorKey,
         initialRoute: widget.itemInitial.route,
+        //initialRoute: "settings",
         observers: [observer],
         onGenerateRoute: (settings) {
           return PageRouteBuilder(
@@ -163,12 +164,12 @@ class _BreadCrumbState extends State<BreadCrumb> {
             reverseTransitionDuration: Duration.zero,
             pageBuilder: (context, animation, secondaryAnimation) {
               if (settings.name == '/') {
-                return widget.itemInitial.body;
+                return widget.itemInitial.body!;
               }
 
               return widget.pages
                   .firstWhere((e) => e.route == settings.name)
-                  .body;
+                  .body!;
             },
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
