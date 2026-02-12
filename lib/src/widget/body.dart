@@ -100,13 +100,16 @@ class _BreadCrumbBodyState extends State<BreadCrumbBody> {
             ],
           ),
         ),
+
         automaticallyImplyLeading: false,
       ),
 
       pane: NavigationPane(
         size: const NavigationPaneSize(openMaxWidth: 230),
+
         indicator: const EndNavigationIndicator(),
         selected: _selectedIndex,
+
         header: widget.header == null
             ? null
             : PageHeader(

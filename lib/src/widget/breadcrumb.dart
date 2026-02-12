@@ -75,32 +75,38 @@ class _BreadCrumbState extends State<BreadCrumb> {
     setState(() {});
   }
 
+  // breadcrumb.dart - Trechos principais otimizados
+
   void _handleRoutePush(Route? route) {
-    if (route?.settings.name == null || !mounted) return;
-    if (route?.settings.name == '/') return;
-    if (breadcrumb.first.value == route?.settings.name) {
-      breadcrumb.removeRange(1, breadcrumb.length);
-    }
-    if (breadcrumb.any((e) => e.value == route!.settings.name)) return;
+    final routeName = route?.settings.name;
+    if (routeName == null || !mounted || routeName == '/') return;
+
+    if (breadcrumb.any((e) => e.value == routeName)) return;
 
     final pageData = widget.pages.firstWhere(
-      (element) => element.route == route!.settings.name,
+      (element) => element.route == routeName,
+      orElse: () => widget.itemInitial,
     );
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        final title = pageData.title ?? pageData.label;
-        breadcrumb = alterColorText(route);
+    final title = pageData.title ?? pageData.label;
 
-        setState(() {
-          breadcrumb.add(
-            BreadcrumbItem(
-              label: Text(title, style: getStyle),
-              value: pageData.route!,
+    setState(() {
+      breadcrumb = [
+        ...breadcrumb.map(
+          (e) => BreadcrumbItem(
+            label: Text(
+              (widget.pages.firstWhere((p) => p.route == e.value).title ??
+                  widget.pages.firstWhere((p) => p.route == e.value).label),
+              style: getStyle.copyWith(color: color.withAlpha(150)),
             ),
-          );
-        });
-      }
+            value: e.value,
+          ),
+        ),
+        BreadcrumbItem(
+          label: Text(title, style: getStyle),
+          value: pageData.route!,
+        ),
+      ];
     });
   }
 
